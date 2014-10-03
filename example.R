@@ -1,5 +1,9 @@
-scantrons = read.csv("/Users/jacobdink/Documents/Courses/TA STATS/grouping_test/scores.csv", stringsAsFactors=FALSE)
-grades = read.csv("/Users/jacobdink/Documents/Courses/TA STATS/grades_from_canvas.csv", stringsAsFactors=FALSE)
+source("/Users/jacobdink/Documents/Projects/helpful-grading-scripts/match_scantron_names.R")
+scantron_path = file.choose()
+grade_path = file.choose()
+setwd(dir = dirname(grade_path))
+scantrons = read.csv(scantron_path, stringsAsFactors=FALSE)
+grades = read.csv(grade_path, stringsAsFactors=FALSE)
 grades = grades[2:nrow(grades),] # remove the "points possible" column
 
 col_names_sc = list("name" = "Student", "score" = "Total")
