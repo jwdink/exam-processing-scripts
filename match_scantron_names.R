@@ -16,9 +16,6 @@ match_scantron_names = function(scantrons, grades, col_names_sc, col_names_gr) {
     # Get each student's full name, split into first and last name:
     # the grades downloaded from the CMS should be comma separated: last, first
     this_student = grades_names[i]
-    if (this_student == "Cheung, Aleka") {
-      cat("debug!")
-    }
     this_student_spl = unlist( str_split(this_student, ",") )
     last_name   = str_trim(this_student_spl[1])
     first_name = str_trim(this_student_spl[2])
