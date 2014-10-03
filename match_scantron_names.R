@@ -29,33 +29,34 @@ match_scantron_names = function(scantrons, grades, col_names_sc, col_names_gr) {
     # Last Name:
     ind_match_ln = numeric()
     substr_len = nchar(last_name)
-    while (length(ind_match_ln) == 0 & substr_len > 4) {
+    min_substr_len = min(substr_len, 3)
+    while (length(ind_match_ln) == 0 & substr_len >= min_substr_len) {
       ind_match_ln = grep( str_sub(last_name, 1, substr_len), 
                            scantron_names, ignore.case= TRUE) # where in vector of scantron names does last name appear?
       substr_len = substr_len - 1
     }
-    # No Match Found? Flag that, also try one more time with partial string matching:
     if (substr_len < (nchar(last_name) - 1)) no_exact_match = TRUE
-    if (no_exact_match & length(ind_match_ln) == 0) {
-      ind_match_ln = agrep( last_name, scantron_names, ignore.case= TRUE)
-    } 
     
     # First Name:
     ind_match_fn = numeric()
     substr_len = nchar(first_name)
-    while (length(ind_match_fn) == 0 & substr_len > 4) {
+    min_substr_len = min(substr_len, 3)
+    while (length(ind_match_fn) == 0 & substr_len >= min_substr_len) {
       ind_match_fn = grep( str_sub(first_name, 1, substr_len), 
                            scantron_names, ignore.case= TRUE) # where in vector of scantron names does last name appear?
       substr_len = substr_len - 1
     }
-    # No Match Found? Flag that, also try one more time with partial string matching:
     if (substr_len < (nchar(first_name) - 1)) no_exact_match = TRUE
-    if (no_exact_match & length(ind_match_ln) == 0) {
-      ind_match_fn = agrep( first_name, scantron_names, ignore.case= TRUE)
-    }
     
     # Find where first and last match
     ind_match = intersect(ind_match_ln, ind_match_fn)
+    
+    # One last try:
+    if (length(ind_match) != 1) {
+      ind_match_ln = agrep( last_name, scantron_names, ignore.case= TRUE)
+      ind_match_fn = agrep( first_name, scantron_names, ignore.case= TRUE)
+      ind_match = intersect(ind_match_ln, ind_match_fn)
+    }
     
     if (length(ind_match) == 1) {
       
