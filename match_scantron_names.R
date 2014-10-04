@@ -1,13 +1,18 @@
-match_scantron_names = function(scantrons, grades, col_names_sc, col_names_gr) {
+match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc, col_names_gr) {
   require("stringr")
   
   # scantron dataframe
   # grade dataframe
-  # column names scantron: a named list with fields: "name" and "score"-- each element gives column name(s) in scantron file
-  # column names grades:   a named list with fields: "name" and "score"-- each element gives column name(s) in grades file
+  # column names scantron: a named vector with: "name" and "score"-- each element gives column name in scantron file
+  # column names grades:   a named vector with: "name" and "score"-- each element gives column name in grades file
   
-  scantron_names = scantrons[ , col_names_sc[["name"]] ]
-  grades_names =   grades[ , col_names_sc[["name"]] ]
+  # Remove extra columns:
+  scantrons = read.csv(scantron_filepath, stringsAsFactors= FALSE, check.names=FALSE)
+  grades    = read.csv(grades_filepath, stringsAsFactors= FALSE, check.names=FALSE)
+  
+  # Vectors of names:
+  scantron_names = scantrons[ , col_names_sc["name"] ]
+  grades_names =   grades[ , col_names_gr["name"] ]
   
   scantrons$FormattedName = NA
   
@@ -83,13 +88,14 @@ match_scantron_names = function(scantrons, grades, col_names_sc, col_names_gr) {
   
   # Create a dataframe with formatted name and correct score:
   to_merge = scantrons
-  cols_to_keep = c(col_names_sc[["score"]], "FormattedName")
+  cols_to_keep = c(col_names_sc["score"], "FormattedName")
   to_merge = to_merge[,cols_to_keep]
-  colnames(to_merge)[colnames(to_merge) == col_names_sc[["score"]] ] = "ScoreToUpdate"
+  colnames(to_merge)[colnames(to_merge) == col_names_sc["score"] ] = "ScoreToUpdate"
   
   # Merge this dataframe with the "grades" dataframe, format score for proper output:
-  out = merge(grades, to_merge, by.x = col_names_sc[["name"]], by.y= "FormattedName", all.x = TRUE)
-  out[ , col_names_gr[["score"]] ] = out$ScoreToUpdate
+  out = merge(grades, to_merge, by.x = col_names_sc["name"], by.y= "FormattedName", all.x = TRUE)
+  empty_scores = is.na(out[,col_names_gr["score"]])
+  out[empty_scores , col_names_gr["score"] ] = out$ScoreToUpdate[empty_scores]
   all_but_one_col = colnames(out)[colnames(out) != "ScoreToUpdate"]
   out = out[,all_but_one_col]
   
