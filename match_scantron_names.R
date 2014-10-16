@@ -1,16 +1,16 @@
-match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc, col_names_gr) {
+match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc, col_names_gr, name_separator= ",") {
   require("stringr")
   
-  # scantron dataframe
-  # grade dataframe
-  # column names scantron: a named vector with: "name" and "score"-- each element gives column name in scantron file
-  # column names grades:   a named vector with: "name" and "score"-- each element gives column name in grades file
+  # scantron path
+  # grade path
+  # column names for scantron: a named vector with: "name" and "score"-- each element gives column name in scantron file
+  # column names for grades:   a named vector with: "name" and "score"-- each element gives column name in grades file
   
-  # Remove extra columns:
+  # Load in CSVs, preserve column names:
   scantrons = read.csv(scantron_filepath, stringsAsFactors= FALSE, check.names=FALSE)
   grades    = read.csv(grades_filepath, stringsAsFactors= FALSE, check.names=FALSE)
   
-  # Vectors of names:
+  # Vectors of student names:
   scantron_names = scantrons[ , col_names_sc["name"] ]
   grades_names =   grades[ , col_names_gr["name"] ]
   
@@ -21,7 +21,7 @@ match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc
     # Get each student's full name, split into first and last name:
     # the grades downloaded from the CMS should be comma separated: last, first
     this_student = grades_names[i]
-    this_student_spl = unlist( str_split(this_student, ",") )
+    this_student_spl = unlist( str_split(this_student, name_separator) )
     last_name   = str_trim(this_student_spl[1])
     first_name = str_trim(this_student_spl[2])
     
