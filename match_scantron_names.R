@@ -19,7 +19,7 @@ match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc
   for (i in seq_along(grades_names)) {
     
     # Get each student's full name, split into first and last name:
-    # the grades downloaded from the CMS should be comma separated: last, first
+    # the grades downloaded from the CMS should be separated by name_separator, with last name first
     this_student = grades_names[i]
     this_student_spl = unlist( str_split(this_student, name_separator) )
     last_name   = str_trim(this_student_spl[1])
