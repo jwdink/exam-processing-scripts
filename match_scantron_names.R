@@ -9,6 +9,7 @@ match_scantron_names = function(scantron_filepath, grades_filepath, col_names_sc
   # Load in CSVs, preserve column names:
   scantrons = read.csv(scantron_filepath, stringsAsFactors= FALSE, check.names=FALSE)
   grades    = read.csv(grades_filepath, stringsAsFactors= FALSE, check.names=FALSE)
+  grades    = grades[grades[ , col_names_gr["name"] ] != "",] # remove empty cells
   
   # Vectors of student names:
   scantron_names = scantrons[ , col_names_sc["name"] ]
